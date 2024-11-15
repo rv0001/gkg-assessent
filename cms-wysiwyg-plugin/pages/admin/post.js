@@ -44,6 +44,11 @@ export default function Posts() {
     return null;
   };
 
+  function convertToEmbedUrl(url) {
+    const videoId = url.split('v=')[1]; // Extract the video ID from the URL
+    return `https://www.youtube.com/embed/${videoId}`;
+  }
+
   // Delete post function
   const deletePost = async (postId) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this post?");
@@ -63,6 +68,24 @@ export default function Posts() {
     } catch (error) {
       console.error('Error deleting post:', error);
     }
+  };
+
+  // State to manage the modal visibility
+  const [showModal, setShowModal] = useState(false);
+  const [videoUrl, setVideoUrl] = useState(null);
+
+  // Open video modal
+  const openVideoModal = (url) => {
+    // console.log(url)
+    const embedUrl = convertToEmbedUrl(url);
+    setVideoUrl(embedUrl);
+    setShowModal(true);
+  };
+
+  // Close video modal
+  const closeVideoModal = () => {
+    setShowModal(false);
+    setVideoUrl(null);
   };
 
   return (
@@ -86,6 +109,18 @@ export default function Posts() {
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
 
+            {/* Show YouTube video if the youtubeUrl exists */}
+            {post.youtubeUrl && (
+              <div>
+                <button
+                  className={styles.videoButton}
+                  onClick={() => openVideoModal(post.youtubeUrl)}
+                >
+                  Watch Video
+                </button>
+              </div>
+            )}
+
             {/* Edit Button */}
             <Link href={`edit-post/${post.id}`}>
               <button className={styles.readMoreLink}>Edit</button>
@@ -101,6 +136,24 @@ export default function Posts() {
           </div>
         ))}
       </div>
+
+      {/* Modal for video */}
+      {showModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <button className={styles.closeButton} onClick={closeVideoModal}>X</button>
+            <iframe
+              width="560"
+              height="315"
+              src={`${videoUrl}`}
+              title="YouTube video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

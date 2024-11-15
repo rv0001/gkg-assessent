@@ -1,10 +1,11 @@
+
 // import { useState } from 'react';
 // import { useRouter } from 'next/router';
+// import Link from 'next/link';
 // import dynamic from 'next/dynamic';
 // import 'react-quill/dist/quill.snow.css'; // Import Quill's default theme CSS
 // import styles from '../../styles/newPost.module.css'; // Add your custom styles
 
-// // Dynamically import React Quill to avoid SSR issues in Next.js
 // const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 // export default function NewPost() {
@@ -13,7 +14,7 @@
 //     slug: '',
 //     content: '',
 //   });
-//   const [preview, setPreview] = useState(false); // State to toggle preview
+
 //   const router = useRouter();
 
 //   const handleInputChange = (e) => {
@@ -28,7 +29,7 @@
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
 
-//     const response = await fetch('/api/posts', {
+//     const response = await fetch('http://localhost:5001/api/posts', {
 //       method: 'POST',
 //       headers: {
 //         'Content-Type': 'application/json',
@@ -44,16 +45,12 @@
 //     }
 //   };
 
-//   const togglePreview = () => {
-//     if (!preview && !post.content) {
-//       alert('Please enter content for preview.');
-//       return;
-//     }
-//     setPreview(!preview); // Toggle preview state
-//   };
-
 //   return (
 //     <div className={styles.container}>
+//             <Link href="/admin/post">
+
+// <button className={styles.backButton}>Home</button>
+// </Link>
 //       <h1 className={styles.title}>Create New Post</h1>
 
 //       <form onSubmit={handleSubmit} className={styles.formContainer}>
@@ -75,7 +72,6 @@
 //           className={styles.inputField}
 //         />
 
-//         {/* React Quill Editor for content */}
 //         <div className={styles.editorContainer}>
 //           <ReactQuill
 //             value={post.content}
@@ -85,65 +81,58 @@
 //           />
 //         </div>
 
-//         {/* Toggle Preview Button */}
-//         <button
-//           type="button"
-//           onClick={togglePreview}
-//           className={styles.button}
-//         >
-//           {preview ? 'Edit' : 'Preview'}
+//         <button type="submit" className={styles.button}>
+//           Create Post
 //         </button>
-
-//         {preview ? (
-//           post.content || post.title || post.slug ? (
-//             <div className={styles.previewContainer}>
-//               <h2>Preview</h2>
-//               {post.title ? (<><h2>{post.title}</h2></>):""}
-//               {post.slug ? (<><h4>{post.slug}</h4></>):""}
-//               {post.content ? (<> <div
-//                 dangerouslySetInnerHTML={{ __html: post.content }}
-//                 className={styles.previewContent}
-//               ></div></>):""}
-
-//               {/* <div
-//                 dangerouslySetInnerHTML={{ __html: post.content }}
-//                 className={styles.previewContent}
-//               ></div> */}
-//             </div>
-//           ) : (
-//             <div className={styles.previewContainer}>
-//               <h2>No Content to Preview</h2>
-//             </div>
-//           )
-//         ) : (
-//           <button type="submit" className={styles.button}>
-//             Create Post
-//           </button>
-//         )}
 //       </form>
 //     </div>
 //   );
 // }
 
 
-// /pages/admin/new-post.js (New Post Page)
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css'; // Import Quill's default theme CSS
-import styles from '../../styles/newPost.module.css'; // Add your custom styles
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import dynamic from "next/dynamic";
+import "react-quill/dist/quill.snow.css"; // Import Quill's default theme CSS
+import styles from "../../styles/newPost.module.css"; // Add your custom styles
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 export default function NewPost() {
   const [post, setPost] = useState({
-    title: '',
-    slug: '',
-    content: '',
+    title: "",
+    slug: "",
+    content: "",
+    youtubeUrl: "",
   });
+  const [videoEmbedActive, setVideoEmbedActive] = useState(false); // Track if video embed is active
+  const [loading, setLoading] = useState(true);
 
   const router = useRouter();
+
+  // Fetch plugins on page load
+  useEffect(() => {
+    const fetchPlugins = async () => {
+      try {
+        const response = await fetch("http://localhost:5001/api/posts/plugins");
+        if (!response.ok) throw new Error("Failed to fetch plugins.");
+        const plugins = await response.json();
+
+        // Check if the video embed plugin is active
+        const videoPlugin = plugins.find(
+          (plugin) => plugin.name === "Video Embed" && plugin.isActive === 1
+        );
+        setVideoEmbedActive(!!videoPlugin); // Set the state based on plugin status
+      } catch (err) {
+        console.error("Error fetching plugins:", err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlugins();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -157,28 +146,29 @@ export default function NewPost() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch('http://localhost:5001/api/posts', {
-      method: 'POST',
+    const response = await fetch("http://localhost:5001/api/posts", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(post),
     });
 
     if (response.ok) {
-      alert('Post created successfully!');
-      router.push('/admin/post');
+      alert("Post created successfully!");
+      router.push("/admin/post");
     } else {
-      alert('Failed to create post');
+      alert("Failed to create post");
     }
   };
 
+  if (loading) return <p>Loading...</p>;
+
   return (
     <div className={styles.container}>
-            <Link href="/admin/post">
-
-<button className={styles.backButton}>Home</button>
-</Link>
+      <Link href="/admin/post">
+        <button className={styles.backButton}>Home</button>
+      </Link>
       <h1 className={styles.title}>Create New Post</h1>
 
       <form onSubmit={handleSubmit} className={styles.formContainer}>
@@ -208,6 +198,18 @@ export default function NewPost() {
             theme="snow"
           />
         </div>
+
+        {/* Show YouTube URL input field if the video embed plugin is active */}
+        {videoEmbedActive && (
+          <input
+            type="text"
+            name="youtubeUrl"
+            value={post.youtubeUrl}
+            onChange={handleInputChange}
+            placeholder="Add YouTube Video URL"
+            className={styles.inputField}
+          />
+        )}
 
         <button type="submit" className={styles.button}>
           Create Post

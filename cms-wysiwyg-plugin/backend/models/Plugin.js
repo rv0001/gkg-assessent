@@ -3,24 +3,21 @@ import { DataTypes } from 'sequelize';
 
 import sequelize from '../db.js';  // or wherever your Sequelize instance is
 
-const Post = sequelize.define('Post', {
-  title: {
+const Plugin = sequelize.define('Plugin', {
+  name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  slug: {
+  description: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
   },
-  content: {
+  isActive: {
     type: DataTypes.TEXT,
     allowNull: false,
-  },
-  youtubeUrl: {
-    type: DataTypes.TEXT,
-    allowNull: true,
   }
 } , {timestamps:false});
 
-export { Post };
+// Named export of the Post model
+export { Plugin };

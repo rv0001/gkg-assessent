@@ -6,7 +6,7 @@
     "backend": "node backend/server.js",
     "dev": "next dev",
     "build": "next build && npm run build-backend",
-    "build-backend": "cd backend && npm install && node server.js", 
+    "build-backend": "cd backend && npm install && node server.js",
     "start": "next start",
     "lint": "next lint",
     "install": "npm install"
@@ -25,7 +25,8 @@
     "react-dom": "^18.3.1",
     "react-quill": "^2.0.0",
     "sequelize": "^6.37.5",
-    "sequelize-cli": "^6.6.2"
+    "sequelize-cli": "^6.6.2",
+    "swiper": "^7.4.1"
   },
   "devDependencies": {
     "@types/node": "^20",

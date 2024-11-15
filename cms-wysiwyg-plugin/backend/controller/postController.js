@@ -1,62 +1,22 @@
-import { Post } from '../models/Post.js'; // Assuming your Sequelize model is here
-import fs from 'fs';
-import path from 'path';
+import { Post } from '../models/Post.js';
+import { Plugin } from '../models/Plugin.js'; 
 
-const pluginsDirectory = path.join(process.cwd(), 'backend', 'plugins');
 
 
 export const PostController = {
 
-  async  plugins(req, res) {
-    try {
-      const plugins = [];
-      const pluginFolders = fs.readdirSync(pluginsDirectory);
-  
-      // Iterate through the plugin folders and load their index.js files
-      for (const folder of pluginFolders) {
-        const pluginPath = path.join(pluginsDirectory, folder);
-        const pluginConfigPath = path.join(pluginPath, 'index.js');
-  
-        // Check if the plugin's index.js exists
-        if (fs.existsSync(pluginConfigPath)) {
-          try {
-            // Dynamically import the plugin module (index.js)
-            const pluginModule = await import(pluginConfigPath);
-            const plugin = pluginModule.plugin || {}; 
-            console.log(plugin) // Assuming each plugin exports an object with 'plugin'
-  
-            // Push the plugin configuration to the plugins array
-            plugins.push({
-              name: plugin.name,
-              description: plugin.description,
-              version: plugin.version,
-              onLoad: plugin.onLoad ? 'onLoad':  null,
-              renderBlock: plugin.renderBlock ? 'renderBlock': null
-            });
-          } catch (error) {
-            console.error(`Error loading plugin from ${pluginConfigPath}:`, error);
-          }
-        }
-      }
-  
-      // Send the response with the loaded plugins
-      res.status(200).json({ plugins });
-    } catch (error) {
-      console.error('Error loading plugins:', error);
-      res.status(500).json({ error: 'Failed to load plugins' });
-    }
-  },
+
   
   async createPost(req, res) {
     try {
         console.log(req.body)
-      const { title, slug, content } = req.body;
+      const { title, slug, content ,youtubeUrl} = req.body;
       
       if (!title || !slug || !content) {
         return res.status(400).json({ error: 'Title, slug, and content are required.' });
       }
       
-      const newPost = await Post.create({ title, slug, content });
+      const newPost = await Post.create({ title, slug, content,youtubeUrl });
       return res.status(201).json(newPost);
     } catch (error) {
         console.log(error)
@@ -89,10 +49,22 @@ export const PostController = {
       return res.status(500).json({ error: 'Failed to fetch post.' });
     }
   },
+  async getAllPlugin(req, res) {
+    try {
+      console.log("kjk")
+      const plugin = await Plugin.findAll();
+      if (!plugin) {
+        return res.status(404).json({ error: 'Plugin not found.' });
+      }
+      return res.status(200).json(plugin);
+    } catch (error) {
+      return res.status(500).json({ error: 'Failed to fetch plugin.' });
+    }
+  },
 
   async updatePost(req, res) {
     try {
-      const { title, slug, content } = req.body;
+      const { title, slug, content ,youtubeUrl} = req.body;
       const post = await Post.findByPk(req.query.id);
 
       if (!post) {
@@ -102,6 +74,8 @@ export const PostController = {
       post.title = title;
       post.slug = slug;
       post.content = content;
+      post.youtubeUrl = youtubeUrl;
+
 
       await post.save();
       return res.status(200).json(post);
@@ -109,6 +83,25 @@ export const PostController = {
       return res.status(500).json({ error: 'Failed to update post.' });
     }
   },
+
+  async updatePlugin(req, res) {
+    try {
+      const { isActive } = req.body;
+      const plugin = await Plugin.findByPk(req.query.id);
+
+      if (!plugin) {
+        return res.status(404).json({ error: 'plugin not found.' });
+      }
+
+      plugin.isActive = isActive;
+
+      await plugin.save();
+      return res.status(200).json(plugin);
+    } catch (error) {
+      return res.status(500).json({ error: 'Failed to update plugin.' });
+    }
+  },
+  
 
   async deletePost(req, res) {
     try {
@@ -123,5 +116,6 @@ export const PostController = {
     } catch (error) {
       return res.status(500).json({ error: 'Failed to delete post.' });
     }
-  }
+  },
+
 };
