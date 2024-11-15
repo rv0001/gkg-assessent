@@ -1,23 +1,20 @@
 // /lib/cms.js
 class CMS {
-    constructor() {
-      this.blocks = {};
+    static blocks = {};
+  
+    static registerBlock(type, renderFunction) {
+      CMS.blocks[type] = renderFunction;
     }
   
-    // Register a frontend block
-    registerFrontendBlock(type, component) {
-      this.blocks[type] = component;
-    }
-  
-    // Render a content block
-    renderBlock(type, props) {
-      const BlockComponent = this.blocks[type];
-      if (BlockComponent) {
-        return <BlockComponent {...props} />;
+    static renderBlock(type, props) {
+      const Block = CMS.blocks[type];
+      if (Block) {
+        return <Block {...props} />;
+      } else {
+        return <div>Unknown block type: {type}</div>;
       }
-      return null;
     }
   }
   
-  export const CMS = new CMS();
+  export { CMS };
   

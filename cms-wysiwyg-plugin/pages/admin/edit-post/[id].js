@@ -21,7 +21,7 @@ export default function EditPost() {
     if (id) {
       // Fetch the post data from your API
       setLoading(true);
-      fetch(`/api/posts?id=${id}`)
+      fetch(`http://localhost:5001/api/posts?id=${id}`)
         .then((res) => res.json())
         .then((data) => {
           if (data) {
@@ -52,7 +52,7 @@ export default function EditPost() {
     e.preventDefault();
 
     // Send updated data to the API
-    const response = await fetch(`/api/posts?id=${id}`, {
+    const response = await fetch(`http://localhost:5001/api/posts?id=${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ export default function EditPost() {
     <div className={styles.container}>
         <Link href="/admin/post">
 
-<button className={styles.backButton}>Back to Posts</button>
+<button className={styles.backButton}>Home</button>
 </Link>
 
       <h1 className={styles.title}>Edit Post</h1>

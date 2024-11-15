@@ -1,41 +1,26 @@
-// /lib/pluginManager.js
-import fs from 'fs';
-import path from 'path';
+// import fs from 'fs';
+// import path from 'path';
 
-class PluginManager {
-  constructor(pluginDirectory) {
-    this.pluginDirectory = pluginDirectory;
-    this.plugins = [];
-  }
+// const pluginsDirectory = path.join(process.cwd(), 'plugins');
 
-  // Load all plugins from the plugin directory
-  loadPlugins() {
-    const pluginDirs = fs.readdirSync(this.pluginDirectory);
+// export function loadPlugins() {
+//   const plugins = [];
+  
+//   if (!fs.existsSync(pluginsDirectory)) return plugins;
 
-    pluginDirs.forEach((pluginDir) => {
-      const pluginPath = path.join(this.pluginDirectory, pluginDir);
-      if (fs.lstatSync(pluginPath).isDirectory()) {
-        const plugin = require(pluginPath);  // Dynamically require plugin
-        this.plugins.push(plugin);
-      }
-    });
+//   const pluginFolders = fs.readdirSync(pluginsDirectory);
 
-    // Initialize each plugin
-    this.plugins.forEach((plugin) => {
-      if (plugin.init) {
-        plugin.init(); // Call init method if exists
-      }
-    });
-  }
+//   pluginFolders.forEach((folder) => {
+//     const pluginPath = path.join(pluginsDirectory, folder);
+//     const pluginIndex = path.join(pluginPath, 'index.js');
+//     const pluginConfig = path.join(pluginPath, 'config.json');
 
-  // Register a content block type
-  registerContentBlock(type, component) {
-    this.plugins.forEach((plugin) => {
-      if (plugin.registerContentBlock) {
-        plugin.registerContentBlock(type, component);
-      }
-    });
-  }
-}
+//     if (fs.existsSync(pluginIndex) && fs.existsSync(pluginConfig)) {
+//       const plugin = require(pluginIndex);
+//       const config = JSON.parse(fs.readFileSync(pluginConfig, 'utf-8'));
+//       plugins.push({ ...plugin, config });
+//     }
+//   });
 
-export default PluginManager;
+//   return plugins;
+// }
