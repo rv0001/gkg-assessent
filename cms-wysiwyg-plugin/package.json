@@ -5,7 +5,8 @@
   "scripts": {
     "backend": "node backend/server.js",
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && npm run build-backend",
+    "build-backend": "cd backend && npm install && node server.js", 
     "start": "next start",
     "lint": "next lint"
   },
