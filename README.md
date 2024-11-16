@@ -4,7 +4,7 @@ to run backend user can run npm run backend
 Pages
 http://localhost:3000/admin/post - page has all post and is landing page
 http://localhost:3000/admin/edit-post/1  -  edit post 
-http://localhost:3000/plugins  - will show all plugins and could be enabled or. disabled
+http://localhost:3000/plugins  - will show all plugins and could be enabled or. disabled.if enabled then i will show in new-post page to add youtube url.
 http://localhost:3000/admin/new-post - for creatuig a new post
 
 there is only one plugin to embed youtube video url as of now
