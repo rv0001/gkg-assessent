@@ -1,4 +1,4 @@
-To run frontend go in cms-wysiwyg-plugin directly and npm run dev it will frontend at localhost:3000
+To run frontend go in cms-wysiwyg-plugin directly first run npm i -f and then npm run dev it will frontend at localhost:3000
 to run backend user can run npm run backend
 
 Pages
