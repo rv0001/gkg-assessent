@@ -1,10 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 import postRoutes from './routes/postRoutes.js'; // Your routes file
-
+import dotenv from 'dotenv';
 const app = express();
 
 // Enable CORS
+dotenv.config({ path: '.env.local' });
 app.use(cors());
 
 // Use express.json() to parse incoming JSON requests

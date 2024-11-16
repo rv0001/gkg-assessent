@@ -1,7 +1,8 @@
 import { Sequelize } from 'sequelize';
-
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
 // Define your database connection
-const sequelize = new Sequelize("mysql://avnadmin:AVNS_n1TjyaK9UNlIErbwbjj@mysql-3a132e1a-verma-0bdf.d.aivencloud.com:14197/test?ssl-mode=REQUIRED", {
+const sequelize = new Sequelize(`${process.env['DATABASE_URL']}`, {
   dialect: 'mysql', // or another database dialect
   logging: false,
 });
